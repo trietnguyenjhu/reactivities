@@ -1,26 +1,26 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useContext } from "react";
 import { Segment, Form, Button } from "semantic-ui-react";
 import { IActivity } from "../../../app/models/activity";
 import { v4 as uuid } from "uuid";
+import ActivityStore from "../../../app/stores/activityStore";
+import { observer } from "mobx-react-lite";
 
 interface IProps {
-  setEditMode: (editMode: boolean) => void;
-  activity: IActivity | null;
-  createActivity: (activity: IActivity) => void;
-  editActivity: (activity: IActivity) => void;
-  submitting: boolean;
+  activity: IActivity | undefined;
 }
 
-const ActivityForm: React.FC<IProps> = ({
-  setEditMode,
-  activity: initalFormState,
-  createActivity,
-  editActivity,
-  submitting
-}) => {
+const ActivityForm: React.FC<IProps> = ({ activity: initialFormState }) => {
+  const activityStore = useContext(ActivityStore);
+  const {
+    cancelFormOpen,
+    submitting,
+    editActivity,
+    createActivity
+  } = activityStore;
+
   const initializeForm = () => {
-    if (initalFormState) {
-      return initalFormState;
+    if (initialFormState) {
+      return initialFormState;
     } else {
       return {
         id: "",
@@ -57,7 +57,7 @@ const ActivityForm: React.FC<IProps> = ({
 
   return (
     <Segment clearing>
-      <Form onSubmit={() => handleSubmit()}>
+      <Form onSubmit={handleSubmit}>
         <Form.Input
           onChange={handleInputChange}
           name="title"
@@ -96,9 +96,15 @@ const ActivityForm: React.FC<IProps> = ({
           placeholder="Venue"
           value={activity.venue}
         />
-        <Button loading={submitting} floated="right" positive type="submit" content="Submit" />
         <Button
-          onClick={() => setEditMode(false)}
+          loading={submitting}
+          floated="right"
+          positive
+          type="submit"
+          content="Submit"
+        />
+        <Button
+          onClick={cancelFormOpen}
           floated="right"
           type="button"
           content="Cancel"
@@ -108,4 +114,4 @@ const ActivityForm: React.FC<IProps> = ({
   );
 };
 
-export default ActivityForm;
+export default observer(ActivityForm);
