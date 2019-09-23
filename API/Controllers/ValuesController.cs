@@ -27,9 +27,14 @@ namespace API.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<string>> Get(int id)
+        public async Task<ActionResult<Value>> Get(int id)
         {
             var value = await this._context.Values.FindAsync(id);
+
+            if (value == null) {
+                return NotFound();
+            }
+
             return Ok(value);
         }
 

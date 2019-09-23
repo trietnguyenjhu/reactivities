@@ -22,7 +22,8 @@ class ActivityStore {
     const sortedActivities = activities.sort(
       (a, b) => Date.parse(a.date) - Date.parse(b.date)
     );
-    return Object.entries( // reduce to arrays of [date, activity]
+    return Object.entries(
+      // reduce to arrays of [date, activity]
       sortedActivities.reduce(
         (activities, activity) => {
           const date = activity.date.split("T")[0];
@@ -64,12 +65,12 @@ class ActivityStore {
       this.loadingInitial = true;
       try {
         activity = await agent.Activities.details(id);
-        runInAction("getting activity", () => {
+        runInAction("loading activity", () => {
           this.activity = activity;
           this.loadingInitial = false;
         });
       } catch (error) {
-        runInAction("get activity error", () => {
+        runInAction("load activity error", () => {
           this.loadingInitial = false;
         });
         console.log(error);
